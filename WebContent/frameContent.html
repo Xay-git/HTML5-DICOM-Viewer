@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="en" manifest="oviyam2.manifest">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- <title>Viewer</title> -->
+
+        <script type="text/javascript" src="js/lib/jquery-latest.js"></script>
+        <script type="text/javascript" src="js/lib/jquery-ui-latest.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.cookies.min.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.sleep.js"></script>        
+        <script type="text/javascript" src="js/viewer.js"></script>      
+<!--         <script type="text/javascript" src="js/lib/smartslider.js"></script> -->
+
+        <!-- Scout line  -->
+        <script type="text/javascript" src="js/Localizer.js"></script>        
+        <script type="text/javascript" src="js/SliceLocator.js"></script>
+        <script type="text/javascript" src="js/ScoutLineModel.js"></script>
+        <script type="text/javascript" src="js/ImageOrientation.js"></script>
+        
+        <!-- Windowing  -->
+        <script type="text/javascript" src="js/lib/BinFileReader.js"></script>
+        <script type="text/javascript" src="js/dicom/DicomInputStreamReader.js"></script>
+        <script type="text/javascript" src="js/dicom/DicomElement.js"></script>
+        <script type="text/javascript" src="js/dicom/DicomParser.js"></script>
+        <script type="text/javascript" src="js/dicom/LookupTable.js"></script>
+        
+        <script type="text/javascript" src="js/framecontent.js"></script>
+        <script type="text/javascript" src="js/toolactivator.js"></script>
+        <script type="text/javascript" src="js/oviyam.js"></script>
+        <script type="text/javascript" src="js/line.js"></script>
+        <script type="text/javascript" src="js/rect.js"></script>
+        <script type="text/javascript" src="js/oval.js"></script>
+        <script type="text/javascript" src="js/angle.js"></script>
+        <script type="text/javascript" src="js/measure.js"></script>
+
+        <script type="text/javascript" src="js/lib/jquery.contextMenu.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery.contextMenu.css" />
+<!--         <link rel="stylesheet" type="text/css" href="css/smartslider.css" /> -->
+        <link rel="stylesheet" type="text/css" href="css/demos.css" />
+        <link rel="stylesheet" type="text/css" href="css/frameContent.css" />
+    </head>
+    <body>
+        <div id="footer" class="demo">
+        	<div id="start" class="textOverlay" style="right: 1%; top: 0px; width: 100%; height: 15px; text-align: center;"></div>        	        	        	
+            <div id="trackbar1" ></div>
+            <div id="end" class="textOverlay" style="right: 1%; bottom: 0px; width: 100%; height:15px;  text-align: center;"></div>                        
+        </div>             
+
+        <div id="ImagePane" style="height:100% !important;">
+            <div id="patName" class="textOverlay" style="left:5px; top:10px"></div>
+            <div id="patID" class="textOverlay" style="left:5px; top:30px"></div>
+            <div id="patGender" class="textOverlay" style="left:5px; top:50px"></div>
+            <div id="studyDate" class="textOverlay" style="right:7px;top:10px"></div>
+            <div id="studyDesc" class="textOverlay" style="right:7px;top:30px"></div>
+            <div id="seriesDesc" class="textOverlay" style="right:7px;top:50px"></div>
+            <div id="PDFContent" align="center"></div>
+            <div id="SRContent"></div>
+            <div style="height:100%; margin:auto;" id="canvasDiv">
+                <canvas id="imageCanvas"  style="z-index:1; position:absolute; margin:auto;">Your browser doesn't support canvas.</canvas>
+                <canvas id="canvasLayer1" style="z-index:2; position:absolute; margin:auto;">Your browser doesn't support canvas.</canvas>
+                <canvas id="canvasLayer2" style="z-index:3; position:absolute; margin:auto;">Your browser doesn't support canvas.</canvas>
+                <canvas id="previewCanvas" class="preview" style="z-index:4; position:absolute; top: 52px; right: 2px;"></canvas>
+                <canvas id="highlightCanvas" class="preview" style="z-index:5; position:absolute; top: 52px; right: 2px;"></canvas>
+            </div>
+<!--             <div id="applyWLDiv" class="textOverlay" style="bottom:100px; left:7px; cursor:pointer; display:none" divState="false" onclick="applyWL();">Apply All</div> -->
+            <div id="multiframe" class="textOverlay" style="bottom:75px; left: 7px; background-color:#B76432; visibility:hidden;">Multiframe</div>
+            <div id="totalImages" class="textOverlay" style="left:5px; bottom:55px"></div>
+            <div id="windowLevel" class="textOverlay" style="left:5px; bottom:35px"></div>
+            <div id="huDisplayPanel" class="textOverlay" style="left:5px; bottom:15px"></div>
+            <div id="thickLocationPanel" class="textOverlay" style="left:5px; bottom:15px"></div>
+<!--             <div id="multiframe" class="textOverlay" style="bottom:75px; right: 7px; background-color:#B76432; visibility:hidden;">Multiframe</div> -->
+            <div id="imageSize" class="textOverlay" style="bottom:55px; right:7px;">Image size: </div>
+            <div id="viewSize" class="textOverlay" style="bottom:35px; right:7px;">View size: </div>
+            <div id="zoomPercent" class="textOverlay" style="bottom:15px; right:7px;">Zoom: </div>
+
+            <div id="imgOriTop" class="textOverlay" style="left:50%; top:10px"></div>
+            <div id="imgOriRight" class="textOverlay" style="top:50%;right:7px"></div>
+            <div id="imgOriBottom" class="textOverlay" style="bottom:15px; right:50%"></div>
+            <div id="imgOriLeft" class="textOverlay" style="top:50%;left:5px;"></div>
+
+            <div id="frameSrc" style="visibility:hidden"></div>
+            <div id="forUIDPanel" style="visibility:hidden"></div>
+            <div id="imgPosition" style="visibility:hidden"></div>
+            <div id="imgOrientation" style="visibility:hidden"></div>
+            <div id="pixelSpacing" style="visibility:hidden"></div>
+            <div id="imgPixelSpacing" style="visibility:hidden"></div>
+            <div id="imgType" style="visibility:hidden"></div>
+            <div id="refSOPInsUID" style="visibility:hidden"></div>
+            <div id="modalityDiv" style="visibility:hidden"></div>          
+            
+            <div id="tool" style="display:none;"></div>           
+            <div id="serId" style="display:none;"></div>
+            <div id="studyId" style="display:none;"></div>  
+            
+            <div id="progressbar"></div>            
+            <div id="progresslbl"></div>
+            <img id="wltmpImg" style="display:none;" onload="showImg(null,jQuery(this).get(0),true);"/>
+        </div>        
+    </body>
+</html>

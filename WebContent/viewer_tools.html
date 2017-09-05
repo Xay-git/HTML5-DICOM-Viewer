@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html lang="en" manifest="oviyam2.manifest">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <script type="text/javascript" src="js/lib/jquery-latest.js"></script>
+        <script type="text/javascript" src="js/lib/jquery-ui-latest.js"></script>
+       
+        <script type="text/javascript" src="js/LoadLanguage.js"></script>      
+
+        <style type="text/css">
+            .toolbarButton {
+                position: relative;
+                float: left;
+                margin-left: 0px;
+                height: 100%;
+                width: 40px;
+            }
+
+            .toggleButton {
+                position: relative;
+                float: left;
+                margin-left: 0px;
+                height: 100%;
+                width: 40px;
+            }
+
+            .toggleButton:hover {
+                cursor: pointer;
+                background: #666;
+            }
+
+            .toggleOff {
+                background: #666;
+                color: #FFFFFF;
+                opacity: 1.0;
+            }
+
+
+            .imgOff {
+                position: relative;
+                top: 7px;
+            }
+
+            .imgOn {
+                position: relative;
+                top: 7px;
+            }
+
+            .current {
+                background: #666;
+				opacity: 1.0;
+            }
+
+            #containerBox {
+                height:45px;
+                width: 101%;
+                background: #000;
+                margin-left: -6px;
+                margin-top: -6px;
+            }
+
+            .textOverlay {
+                position: absolute;
+                color: #FFFFFF;
+                font-weight: bold;
+                font-family: Arial;
+                font-size: 14px;
+                z-index: 900;
+            }
+
+           #loopSlider{
+                height: 9px;
+                background: rgb(175,125,105);
+            }
+            
+            .ui-slider .ui-slider-handle {
+            	background: rgb(100,75,75) !important;
+            	height:	15px !important;
+            	width:	15px !important;
+            	cursor: pointer !important;
+            }
+
+            #loopDiv {
+               position:absolute;
+               right:0px;
+               font-size: 10pt;                
+                margin-top: 10px;
+                width: 23%;                
+            }
+
+            #presetDiv {
+                float: left;
+                width: 100px;
+                display: table;
+                height: 100%;
+                text-align: center;
+            }
+
+            .tooltip{
+                margin:4px;
+                padding:4px;
+                border:1px solid blue;
+                background-color:#FFF;
+                position: absolute;
+                z-index: 2;
+                color: #000;
+                font-size: 11px;
+            }		
+
+            /* Metadata Tag list */
+            table.tagList {
+                border-collapse:collapse;
+            }
+
+            table.tagList thead td {
+                font-weight: bold;
+            }
+            table.tagList td {
+                border: 1px solid grey;
+                padding: 2px;
+                font-size: 80%;
+            }
+
+			.cmenuItem {						
+				color: #FFF !important;
+				padding-left: 5px !important;
+				text-align: left;
+				font-size: 13px;
+			}
+
+			.cmenuItem:hover {
+				background: #0099FF;
+				background-image: none !important;
+			}
+
+            .ui-combobox {
+                position: relative;
+                display: inline-block;
+            }
+
+            .ui-button {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                margin-left: -1px;
+                padding: 0;
+                /* adjust styles for IE 6/7
+                *height: 1.7em;
+                *top: 0.1em; */
+            }
+
+            .ui-autocomplete-input {
+                margin: 0;
+                padding: 0.3em;
+            }
+           
+            #back a{
+               position: absolute;
+              
+              
+               width:100px;
+               height:20px;
+               margin-bottom:5px;
+               margin-top:40px;
+               text-decoration:none; 
+               color:#ff8900;
+               font-weight:bold;
+               font-size:15px;
+               display:block;
+              
+            }
+        </style>
+
+		<script type="text/javascript">
+		jQuery(document).ready(function() {			
+		
+    	jQuery("#loopSlider").slider({
+       		max:1000,
+        	value:500
+	    });	
+	        
+    jQuery("#loopSlider").bind("slidechange", function(event, ui) {    	
+        loopSpeed = parseInt(jQuery("#loopSlider").slider('option').max - ui.value);
+        createEvent('ToolSelection',{tool:'loop',isLoop:$('#loopChkBox').is(':checked')});
+    });
+
+    jQuery('#containerBox .toolbarButton').hover(function() {
+        var selected = jQuery('#containerBox').find('.current');
+        jQuery(selected).attr('class', 'toolbarButton');
+        jQuery(selected).children().attr('class', 'imgOff');
+        jQuery(this).attr('class', 'toolbarButton current');
+        jQuery(this).children().attr('class', 'imgOn');
+        jQuery(this).css('cursor', 'pointer');
+    }, function() {
+        var selected = jQuery('#containerBox').find('.current');
+        jQuery(selected).attr('class', 'toolbarButton');
+        jQuery(selected).children().attr('class', 'imgOff');
+        jQuery(this).css('cursor', 'auto');
+    });
+
+
+    var changeTooltipPosition = function(event) {
+        var tooltipX = event.pageX - 8;
+        var tooltipY = event.pageY + 8;
+        jQuery('div.tooltip').css({
+            top: tooltipY,
+            left: tooltipX
+        });
+    };
+
+    var showTooltip = function(event) {
+        jQuery('div.tooltip').remove();
+        jQuery('<div class="tooltip">3D module not installed!!!</div>').appendTo('body');
+        changeTooltipPosition(event);
+    };
+
+    var hideTooltip = function() {
+        jQuery('div.tooltip').remove();
+    };
+
+    // Context Menues 
+	jQuery("#windowing").contextMenu({menu: 'winContext'});
+	jQuery('#windowing').disableContextMenu();
+	jQuery("#measure").contextMenu({menu: 'measureContext'});
+	jQuery('#measure').disableContextMenu();
+	
+	var timer = null;
+	var mouseup = false;	
+		
+	jQuery('#windowing').mousedown(function(evt) {
+		mouseup = false;	
+			if(evt.which==1) {
+				timer = setTimeout(show,1000);
+				jQuery(this).mouseup(function(e) {
+					mouseup = true;
+					clearTimeout(timer);
+					if(!jQuery('#winContext').is(":visible")) {						
+						doTool('windowing');						
+					}
+				});
+			} 	
+	});
+
+	function show() {
+		if(!mouseup && jQuery('.toggleOff').attr('id')==='windowing') {
+			mouseup = true;
+			jQuery('#winContext').show(":visible");
+		}
+	}
+
+	jQuery('#measure').mousedown(function(evt) {
+		mouseup = false;
+		if(evt.which==1) {
+			timer = setTimeout(showMeasureContext,1000);
+			jQuery(this).mouseup(function(evt) {
+				mouseup = true;
+				clearTimeout(timer);
+				if(!jQuery('#measureContext').is(":visible")) {
+					doTool('measure');
+				}
+			});
+		} 			
+	});
+
+	function showMeasureContext() {
+		if(!mouseup && jQuery('.toggleOff').attr('id')==='measure') {
+			jQuery('#measureContext').show();			
+		}
+	}
+
+	jQuery(document).mousedown(function() {
+		jQuery('.contextMenu').hide();
+	});	
+});  // for document.ready
+
+function doTool(toolId) {
+	createEvent("ToolSelection",{tool:toolId});
+}
+
+function doPreset(wc,ww) {
+	createEvent("ToolSelection",{tool:"preset",wc:wc,ww:ww});
+}
+
+function loop(isLoop) {
+	createEvent('ToolSelection',{tool:'loop',isLoop: isLoop});
+}
+
+jQuery(document).keyup(function(e) {		
+	var curr = jQuery('#containerBox').find('.current');
+
+	switch(e.keyCode) {
+		case 37: //Executed when LEFT arrow pressed
+			if(curr.length) {
+				jQuery(curr).removeClass('current');						
+				jQuery(curr).prev().addClass('current');
+			} else {
+				jQuery('#containerBox div:last-child').addClass('current');
+			}
+			break;			
+		case 39: //Executed when RIGHT arrow pressed			
+			if(curr.length) {
+				jQuery(curr).removeClass('current');						
+				jQuery(curr).next().addClass('current');
+			} else {
+				jQuery('#containerBox div:first-child').addClass('current');
+			}
+			break;		
+		case 13: //Executed when ENTER key pressed 
+			jQuery(curr).removeClass('current');
+
+			var featureSelected = jQuery(curr).attr('id');
+			if(featureSelected.indexOf('loopDiv')<0) {
+				var obj = {tool:featureSelected};
+				createEvent("ToolSelection",obj);     
+			} else {
+				if($('#loopChkBox').is(':checked')) {
+					jQuery('#loopChkBox').attr('checked', false);
+					createEvent('ToolSelection',{tool:'loop',isLoop:false});					
+				} else {
+					jQuery('#loopChkBox').attr('checked', true);
+					createEvent('ToolSelection',{tool:'loop',isLoop:true});
+				}
+			}					
+			break;		
+		case 46: //Executed when DELETE key pressed 
+			doTool('delete');
+			break;			
+	}				
+});
+
+jQuery(document).mouseup(function(e) {
+	createEvent("ToolSelection",{tool:"mouseup"});
+});
+	
+		</script>
+	 </head>
+    <body>
+
+        <div id='contentDiv' style="z-index:1000;top:30px;position:fixed;"></div>
+
+           <div id="back">
+              <a href="default.jsp">☜ &nbsp;主页面</a>
+            </div>
+        <div id="containerBox">
+           
+        
+            <div class="toolbarButton" align="center" id="layout" onclick="changeLayout('layout.html')">
+                <img src="images/layout.png" id="lblLayout" class="imgOff" alt="Layout" title="展开">
+            </div>
+            <div class="toggleButton" align="center" id="windowing">
+                <img src="images/windowing.png" id="lblWindowing" class="imgOff" alt="Windowing" title="亮度">
+				<ul id="winContext" class="contextMenu" style="width:90px; position:fixed; background:#000;">
+		            <li><a href="#" class="cmenuItem" onclick="doPreset(50,320); jQuery(this).addClass('selected');">腹部</a></li>
+		            <li><a href="#" class="cmenuItem" onclick="doPreset(-600,1600); jQuery(this).addClass('selected');">肺部</a></li>
+		            <li><a href="#" class="cmenuItem" onclick="doPreset(40,80); jQuery(this).addClass('selected');">头部</a></li>
+		            <li><a href="#" class="cmenuItem" onclick="doPreset(480,2500); jQuery(this).addClass('selected');">骨骼</a></li>
+		            <li><a href="#" class="cmenuItem" onclick="doPreset(90,350); jQuery(this).addClass('selected');">脖颈</a></li>
+					<li type='separator' style="height: 2px; background-color: #00CC66;"></li>
+					<li><a href="#" class="selected cmenuItem" onclick="doPreset(); jQuery(this).addClass('selected');">默认</a></li>
+				</ul>		
+	        </div>
+            <div class="toggleButton" align="center" id="zoom" onclick="doTool(this.id);">
+                <img src="images/zoomin.png" id="lblZoom" class="imgOff" alt="Zoom In" title="放大，缩小">
+            </div>
+            <div class="toggleButton" align="center" id="move" onclick="doTool(this.id);">
+                <img src="images/move.png" id="lblMove" class="imgOff" alt="Move" title="移动">
+            </div>
+            <div class="toggleButton" align="center" id="scoutLine" onclick="doTool(this.id);">
+                <img src="images/scout.png" id="lblScoutLine" class="imgOff" alt="Scout Line" title="Show Scout Line">
+            </div>
+            <div class="toggleButton" align="center" id="stackImage" onClick="doTool(this.id);">
+                <img src="images/layer.png" id="lblScrollImages" class="imgOff" alt="Scroll Images" title="锁定图像">
+            </div>
+            <div class="toolbarButton" align="center" id="syncSeries" onclick="doSyncSeries()">
+                <img src="images/Link.png" id="lblSynchronize"  class="imgOff" alt="Synchronize" title="同步">
+            </div>
+            <div class="toolbarButton" align="center" id="vflip" onclick="doTool(this.id);">
+                <img src="images/vflip.png" id="lblVFlip" class="imgOff" alt="VFlip" title="上下翻转">
+            </div>
+            <div class="toolbarButton" align="center" id="hflip" onclick="doTool(this.id);">
+                <img src="images/hflip.png" id="lblHFlip" class="imgOff" alt="HFlip" title="左右翻转">
+            </div>
+            <div class="toolbarButton" align="center" id="rotateLeft" onclick="doTool(this.id);">
+                <img src="images/rotate_left.png" id="lblLRotate" class="imgOff" alt="LRotate" title="坐旋转">
+            </div>
+            <div class="toolbarButton" align="center" id="rotateRight" onclick="doTool(this.id);">
+                <img src="images/rotate_right.png" id="lblRRotate" class="imgOff" alt="RRotate" title="右旋转">
+            </div>
+            <div class="toolbarButton" align="center" id="reset" onclick="doTool(this.id);">
+                <img src="images/reset.png" id="lblReset" class="imgOff" alt="Reset" title="重置">
+            </div>
+            <div class="toolbarButton" align="center" id="invert" onclick="doTool(this.id)">
+                <img src="images/invert.png" id="lblInvert" class="imgOff" alt="Invert" title="颜色反转">
+            </div>
+            <div class="toolbarButton" align="center" id="txtOverlay" onclick="doTool(this.id);">
+                <img src="images/textoverlay.png"  id="lblTextOverlay" class="imgOff" alt="Text Overlay" title="图片信息">
+                <!-- <div id="overlayChoice"></div> -->
+            </div>
+
+          <!--  <div class="toolbarButton" align="center" id="3dDiv" onclick="do3D()">
+                <img src="images/Cube3D.png" class="imgOff" alt="3D">
+            </div>  -->
+
+            <div class="toolbarButton" align="center" id="fullScreen" onclick="doFullScreen(this)">
+                <img src="images/fullscreen1.png" id="lblfullscreen" class="imgOff" alt="View fullscreen" title="全屏">
+            </div>
+            <div class="toolbarButton" align="center" id="metaData" onclick="doTool(this.id);">
+                <img src="images/metadata.png" id="lblMetadata" class="imgOff" alt="View meta-data" title="详细信息">
+            </div>
+            
+            
+            
+            
+            
+            
+            <div class="toggleButton" align="center" id="measure">
+                <img src="images/ruler.png" id="lblLines" class="imgOff" alt="Draw measurement lines" title="测量"/>
+				<ul id="measureContext" class="contextMenu" style="width:82px; position:fixed; background:#000;">
+					<li><a id="line" href="#" class="selectedshape cmenuItem" onclick="jQuery('.selectedshape').removeClass('selectedshape'); jQuery(this).addClass('selectedshape'); doTool('ruler');">测量</a></li>
+		            <li><a id="rectangle" href="#" class="cmenuItem" onclick="jQuery('.selectedshape').removeClass('selectedshape'); jQuery(this).addClass('selectedshape'); doTool('rectangle');">矩形</a></li>
+		            <li><a id="oval" href="#" class="cmenuItem" onclick="jQuery('.selectedshape').removeClass('selectedshape'); jQuery(this).addClass('selectedshape'); doTool('oval'); ">圆形</a></li>
+		            <li><a id="angle" href="#" class="cmenuItem" onclick="jQuery('.selectedshape').removeClass('selectedshape'); jQuery(this).addClass('selectedshape'); doTool('angle'); ">角度</a></li>
+					<li type='separator' style="height: 2px; background-color: #00CC66;"></li>
+					<li><a href="#" class="cmenuItem" onclick="doTool('delete');">删除 </a></li>
+					<li><a href="#" class="cmenuItem" onclick="doTool('clearAll');">删除所有 </a></li>
+				</ul>
+            </div>            
+
+            <div id="loopDiv">
+            	<table width="100%;">
+            		<tr>
+            			<td width="30%"><div style="color: #FF8A00; font-size:12px; font-weight:bold; font-family: Arial; text-align: right;">播放速度</div></td>
+            			<td width="2%"><input type="checkbox" id="loopChkBox" onclick="loop(this.checked);" ></td>
+        				<td width="65%" align="right"><div id="loopSlider"></div></td>
+            		</tr>
+            	</table>
+            </div>
+            <!--  Report -->
+             <!-- <div align="center" id="report" onclick="doTool(this.id);" style="position: absolute; right:23%; margin-right: 5px;">
+                <img src="images/reportv.png" id="lblReport" class="imgOff" alt="View report" title="View Report"/>
+            </div>-->  
+           
+        </div>          
+    </body>
+</html>

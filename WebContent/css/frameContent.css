@@ -1,0 +1,157 @@
+html, body {
+    overflow:	hidden !important;
+    font-size: 	80%;
+    background-color: black;
+    margin: 0px;
+}
+
+.toolbarButton {
+    position: relative;
+    float: left;
+    margin-left: 0px;
+    height: 100%;
+    width: 40px;
+}
+
+.imgOff {
+    opacity: 0.5;
+    position: relative;
+    top: 7px;
+}
+
+.imgOn {
+    opacity: 1.0;
+    position: relative;
+    top: 7px;
+}
+
+.current {
+    background: #666;
+    color: #FFFFFF;
+}
+
+#containerBox {
+    height:40px;
+    width: 100%;
+    background: #363636;
+}
+
+.textOverlay {
+    position: absolute;
+    color: #FFFFFF;
+    /*font-weight: bold;*/
+    font-family: Arial;
+    font-size: 14px;
+    z-index: 900;
+}
+
+#loopSlider{
+    width: 145px;
+    float: right;
+    margin-top: 15px;
+}
+
+#loopDiv {
+    float: right;
+    font-size: 62.5%;
+    height: 100%;
+    width: 200px;
+    margin-right: 10px;
+}
+
+.dragme{
+    position:absolute;
+    z-index: 1000;
+}
+
+.crosshair{
+    cursor:crosshair;
+}
+
+.move{
+    cursor:move;
+}
+div#footer{
+    position:absolute;
+    top: 80px;
+    right:6px;    
+    /*width: 12px;*/
+    width: 1px;    
+    z-index: 950;    
+    background: #000 transparent;
+    padding-top: 7px;  
+}
+@media screen{
+    body>div#footer{
+        position:fixed;
+    }
+}
+
+.menu {
+	width: auto !important;	
+}
+
+.menu LI {
+	white-space: nowrap !important;
+	font-size: 13px;
+	font-family: Arial,sans-serif;	
+}
+
+.menu A {
+	white-space: nowrap !important;
+	font-size: 13px;
+	font-family: Arial,sans-serif;
+	padding-left: 5px !important;	
+}
+
+#progressbar {
+	position:absolute;
+	left: 35%;
+	top: 45%;	
+	z-index:100;
+	background: #B48A78;
+	height: 25px;
+	width:	27%;
+	border: none !important;
+	border-radius: 6px;
+	display: none;
+}
+
+.ui-progressbar-value {	
+	background: rgb(100,75,75);
+	border: 1px solid rgb(100,75,75);
+	border-radius: 6px;		
+}
+
+#progresslbl {
+	position:absolute;
+	left:40%;	
+	top: 45%;
+	padding: 5px;
+	z-index:200;
+	color: #fff;
+	font-size: 14px;	
+	display: none;
+}
+
+#trackbar1 {
+	width: 100%;
+	height: 97%;
+	top: 15px;		
+	background: #262626;
+	border: 1px solid #565656;
+	cursor: pointer !important;
+	/*display: none;*/
+}
+
+.ui-slider .ui-slider-handle {        	
+  	background: #484848 !important;
+   	height:	15px !important;
+	width:	auto !important;
+   	cursor: pointer !important;   	
+   	left: -15px;
+   	text-align: center;
+   	min-width: 20px;
+   	font-family: Arial;
+   	padding: 3px 3px 2px 3px;
+}

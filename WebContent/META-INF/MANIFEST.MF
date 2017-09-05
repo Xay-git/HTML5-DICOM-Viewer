@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.3
+Created-By: 1.7.0_45-b18 (Oracle Corporation)
+Implementation-Title: Oviyam2-web
+Implementation-Version: 2.0 ${TODAY}
+Implementation-Vendor: Raster Images
+
